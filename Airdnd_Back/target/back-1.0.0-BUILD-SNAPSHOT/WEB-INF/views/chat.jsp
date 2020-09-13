@@ -22,8 +22,13 @@
 	</script>
 </head>
 <body>
+	${res}<br>
+	
 	Her_k test ㅋㅋㅋvV<br>
-	한글도 테스트 중 특수문자도 ☆★
+	한글도 테스트 중 특수문자도 ☆★<br>
+	<input type="button" value="모든 메시지" onclick="">
+	<input type="button" value="숨긴 메시지" onclick=""><br><br>
+	
 	<form>
 		<!-- if you pressed the send button or pushed the enter key -->
 		<input type="text" size="100" name="content" onkeypress="if(event.keyCode==13) {send(this.form);}">
@@ -53,13 +58,13 @@
 			<c:forEach var="list" items="${list}">
 			<tr>
 				<td>${list.idx}</td>
-				<td>${list.host_idx}(추후 수정)</td>
+				<td>${list.host_idx}</td>
 				<td></td>
-				<td>${list.user_idx}(추후 수정)</td>
+				<td>${list.user_idx}</td>
 				<td></td>
 				<td>${list.content}</td>
 				<td>${list.image_url}</td>
-				<td>${list.send_date_time}(추후 수정)</td>
+				<td>${list.send_date_time}</td>
 				<td></td>
 				<td>${list.msg_hidden_or_not}</td>
 			</tr>

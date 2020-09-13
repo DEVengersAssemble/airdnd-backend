@@ -6,12 +6,14 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import exception.NoIdService;
+import vo.AirdndHostVO;
+import vo.AirdndUserHostVO;
 import vo.AirdndUserVO;
 
 @Repository("userDAO")
@@ -84,7 +86,6 @@ public class AirdndUserDAO implements AirdndUserDAOI{
 		return res;
 	}
 	
-	
 	//로그인 정보 가져오기
 	@Override
 	public AirdndUserVO select_one(AirdndUserVO vo) {
@@ -93,7 +94,7 @@ public class AirdndUserDAO implements AirdndUserDAOI{
 		String email = "";
 		
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		String sql = "select * from airdnd_user where email='" + vo.getEmail() + "' and pwd = '"+ vo.getPwd() + "'";
+		String sql = "select * from airdnd_user where email='" + vo.getEmail() + "'";
 		
 		List<AirdndUserVO> loginlist = jdbcTemplate.query(sql, new RowMapper<AirdndUserVO>() {
 			@Override
@@ -114,19 +115,48 @@ public class AirdndUserDAO implements AirdndUserDAOI{
 			}
 		});
 		
-		user_idx = loginlist.get(0).getUser_idx();
 		
+		NoIdService checkEmail = new NoIdService();
+		AirdndUserVO loginvo = new AirdndUserVO();
 		
-		if(user_idx == -1) {//로그인 실패	
-			
-			return null;
-			
-		} else {			//로그인 성공
-			
-			AirdndUserVO loginvo = new AirdndUserVO();
+		try {
+			user_idx = loginlist.get(0).getUser_idx();
+		} catch (Exception e) {
+			user_idx = -1;
+		}		
+		//이메일 존재 여부 체크
+		try{
+			//checkEmail.NoIdMethod(user_idx);
 			loginvo = loginlist.get(0);
 			return loginvo;
-			
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+		return null;
+	}
+
+	public boolean select_user_host(int user_idx) {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		String sql = "select * from airdnd_host where user_idx='" + user_idx + "'";
+		
+		List<AirdndUserHostVO> loginlist = jdbcTemplate.query(sql, new RowMapper<AirdndUserHostVO>() {
+			@Override
+			public AirdndUserHostVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+				AirdndUserHostVO vo = new AirdndUserHostVO(
+						rs.getInt("idx"),
+						rs.getInt("user_idx"),
+						rs.getInt("host_idx")
+						);
+				return vo;
+			}
+		});
+		
+		boolean isCheck;
+		if(loginlist.size() != 0) {
+			isCheck = true;
+		} else {
+			isCheck = false;
 		}
+		return isCheck;
 	}
 }
