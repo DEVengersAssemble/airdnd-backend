@@ -34,12 +34,15 @@
 ## 페이지별 기능
 
 ### 서버 구현
-
-- 
+> AWS EC2의 인스턴스와 탄력적 IP를 이용해 서버 구축  
+Putty를 사용해 가상컴퓨터(Ubuntu)에 Java, tomcat8, mysql를 리눅스 명령어로 설치  
+Spring을 이용한 기능 구현 코드를 Filezilla로 AWS EC2에 업로드하여 서버 구축  
 
 ### Airbnb 데이터 스크래핑
-
--
+> 실제 Airbnb의 숙소 및 호스트 정보를 가지고 오기 위해 Selenium과 BeautifulSoup4를 사용하여 각 데이터들을 추출  
+추출한 데이터들을 pymysql로 구축한 서버의 MySQL 데이터베이스에 저장  
+원하는 지역의 숙소들을 스크랩하기 위해 Flask로 웹페이지를 구현  
+(Airbnb에는 위도, 경도 데이터가 없기 때문에 숙소 위치를 구현하기 위해 Google geocoder api로 lat, lng을 추출하여 저장)
 
 ### 메인 페이지
 
