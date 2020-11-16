@@ -30,54 +30,54 @@ import vo.AirdndUserVO;
 
 @Controller
 public class UserResInfoController {
-	@Autowired
-	AirdndUserResInfoService airdndUserResInfoService;
-	
-	@Autowired
-	HttpServletRequest request;
-	
-	@RequestMapping(value = "/trips/v1", produces = "application/json;charset=utf8")
-	@ResponseBody
-	public String user_res_info_list(Model model, @RequestParam(value="tab", defaultValue="")String tab) {
-		//Login cookie
-		HttpSession session = request.getSession();
-		Cookie[] cookies = request.getCookies();
-		String sessionKey = "";
-		int signInIdx = 1; //temp
-		String signInEmail = "";
-		String signInName = "";
-		
-		if(cookies == null) {
-			System.out.println("not cookies");
-		}else {
-			for(Cookie cookie : cookies) {
-				if("AirdndSES".equals(cookie.getName())) {
-					sessionKey = cookie.getValue();
-					AirdndUserVO signInVO = (AirdndUserVO)session.getAttribute(sessionKey);
-					signInIdx = signInVO.getUser_idx();
-					signInEmail = signInVO.getEmail();
-					signInName = signInVO.getLast_name() + signInVO.getFirst_name();
-				} else {
-					System.out.println("not login");
-				}
-			}
-		}//if
-		
-		//tab에 따른 page 구분
-		try {
-			tab = URLDecoder.decode(tab, "utf-8");
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		//JSON
-		JSONObject res = new JSONObject();			//1
-		JSONArray resArr = new JSONArray();			//1-2
-		JSONObject userInfo = new JSONObject();		//2
-		
-		JSONArray resArr2 = new JSONArray();		//3
-		JSONObject resInfo = new JSONObject();		//4
+   @Autowired
+   AirdndUserResInfoService airdndUserResInfoService;
+   
+   @Autowired
+   HttpServletRequest request;
+   
+   @RequestMapping(value = "/trips/v1", produces = "application/json;charset=utf8")
+   @ResponseBody
+   public String user_res_info_list(Model model, @RequestParam(value="tab", defaultValue="")String tab) {
+      //Login cookie
+      HttpSession session = request.getSession();
+      Cookie[] cookies = request.getCookies();
+      String sessionKey = "";
+      int signInIdx = 1; //temp
+      String signInEmail = "";
+      String signInName = "";
+      
+      if(cookies == null) {
+         System.out.println("not cookies");
+      }else {
+         for(Cookie cookie : cookies) {
+            if("AirdndSES".equals(cookie.getName())) {
+               sessionKey = cookie.getValue();
+               AirdndUserVO signInVO = (AirdndUserVO)session.getAttribute(sessionKey);
+               signInIdx = signInVO.getUser_idx();
+               signInEmail = signInVO.getEmail();
+               signInName = signInVO.getLast_name() + signInVO.getFirst_name();
+            } else {
+               System.out.println("not login");
+            }
+         }
+      }//if
+      
+      //tab에 따른 page 구분
+      try {
+         tab = URLDecoder.decode(tab, "utf-8");
+      } catch (UnsupportedEncodingException e1) {
+         // TODO Auto-generated catch block
+         e1.printStackTrace();
+      }
+      
+      //JSON
+      JSONObject res = new JSONObject();         //1
+      JSONArray resArr = new JSONArray();         //1-2
+      JSONObject userInfo = new JSONObject();      //2
+      
+      JSONArray resArr2 = new JSONArray();      //3
+      JSONObject resInfo = new JSONObject();      //4
 
 		JSONArray rules = new JSONArray();			//5
 		JSONObject locationInfo = null;				//6-1

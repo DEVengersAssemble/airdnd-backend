@@ -12,21 +12,21 @@ import vo.AirdndHomePictureVO;
 
 @Service("airdndBookmarkService")
 public class AirdndBookmarkService implements AirdndBookmarkServiceI {
-	@Autowired
-	AirdndBookmarkDAO airdnd_bookmark_dao;
-	
-	//Select bookmark list
-	@Override
-	public List<AirdndBookmarkVO> selectBookmark(int user_idx){
-		List<AirdndBookmarkVO> list = airdnd_bookmark_dao.selectBookmark(user_idx);
+   @Autowired
+   AirdndBookmarkDAO airdnd_bookmark_dao;
+   
+   //Select bookmark list
+   @Override
+   public List<AirdndBookmarkVO> selectBookmark(int user_idx){
+      List<AirdndBookmarkVO> list = airdnd_bookmark_dao.selectBookmark(user_idx);
 
-		return list;
-	}
-	
-	//Select bookmark homes
-	@Override
-	public List<AirdndBookmarkedHomesVO> selectBookmarkHomes(int user_idx) {
-		List<AirdndBookmarkedHomesVO> list = airdnd_bookmark_dao.selectBookmarkHomes(user_idx);
+      return list;
+   }
+   
+   //Select bookmark homes
+   @Override
+   public List<AirdndBookmarkedHomesVO> selectBookmarkHomes(int user_idx) {
+      List<AirdndBookmarkedHomesVO> list = airdnd_bookmark_dao.selectBookmarkHomes(user_idx);
 
 		return list;
 	}
@@ -42,21 +42,21 @@ public class AirdndBookmarkService implements AirdndBookmarkServiceI {
 	public List<AirdndBookmarkedHomesVO> selectBookmarkHomesIdx(int bookmark_idx) {
 		List<AirdndBookmarkedHomesVO> list = airdnd_bookmark_dao.selectBookmarkHomesIdx(bookmark_idx);
 
-		return list;
-	}
-	
-	//Search bookmark homes' count
-	@Override
-	public int selectBookmarkHomesCount(int bookmark_idx) {
-		int size = airdnd_bookmark_dao.selectBookmarkHomesCount(bookmark_idx);
-		
-		return size;
-	}
-	
-	//Select user's reservation home's main picture
-	@Override
-	public List<AirdndHomePictureVO> selectHomeMainPicture(int home_idx) {
-		List<AirdndHomePictureVO> list = airdnd_bookmark_dao.selectHomeMainPicture(home_idx);
+      return list;
+   }
+   
+   //Search bookmark homes' count
+   @Override
+   public int selectBookmarkHomesCount(int bookmark_idx) {
+      int size = airdnd_bookmark_dao.selectBookmarkHomesCount(bookmark_idx);
+      
+      return size;
+   }
+   
+   //Select user's reservation home's main picture
+   @Override
+   public List<AirdndHomePictureVO> selectHomeMainPicture(int home_idx) {
+      List<AirdndHomePictureVO> list = airdnd_bookmark_dao.selectHomeMainPicture(home_idx);
 
 		return list;
 	}

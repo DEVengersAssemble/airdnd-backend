@@ -33,52 +33,52 @@ import vo.AirdndUserVO;
 
 @Controller
 public class ChatController {
-	ObjectMapper mapper = new ObjectMapper();
-	
-	@Autowired
-	AirdndChatService airdndChatService;
-	
-	@Autowired
-	HttpServletRequest request;
-	
-	@RequestMapping(value= {"/guest/inbox"}, produces="application/json;charset=utf8")
-	@ResponseBody
-	public String chat_list(Model model) {
-		//Login cookie
-		HttpSession session = request.getSession();
-		Cookie[] cookies = request.getCookies();
-		String sessionKey = "";
-		int signInIdx = 1; //temp
-		String signInName = "MR";
-		String signInProfileImg = "https://a0.muscache.com/defaults/user_pic-225x225.png?im_w=720";
-		
-		if(cookies == null) {
-			System.out.println("not cookies");
-		}else {
-			for(Cookie cookie : cookies) {
-				if("AirdndSES".equals(cookie.getName())) {
-					sessionKey = cookie.getValue();
-					AirdndUserVO signInVO = (AirdndUserVO)session.getAttribute(sessionKey);
-					signInIdx = signInVO.getUser_idx();
-					signInName = signInVO.getFirst_name();
-					signInProfileImg = signInVO.getProfileImg();
-					
-				} else {
-					System.out.println("not login");
-				}
-			}
-		}//if
-		
-		//Final data
-		JSONObject res = new JSONObject();			//1
-		JSONObject resFilter1 = new JSONObject();	//2
-		JSONObject resFilter2 = new JSONObject();	//2
-		JSONObject resFilter3 = new JSONObject();	//2
+   ObjectMapper mapper = new ObjectMapper();
+   
+   @Autowired
+   AirdndChatService airdndChatService;
+   
+   @Autowired
+   HttpServletRequest request;
+   
+   @RequestMapping(value= {"/guest/inbox"}, produces="application/json;charset=utf8")
+   @ResponseBody
+   public String chat_list(Model model) {
+      //Login cookie
+      HttpSession session = request.getSession();
+      Cookie[] cookies = request.getCookies();
+      String sessionKey = "";
+      int signInIdx = 1; //temp
+      String signInName = "MR";
+      String signInProfileImg = "https://a0.muscache.com/defaults/user_pic-225x225.png?im_w=720";
+      
+      if(cookies == null) {
+         System.out.println("not cookies");
+      }else {
+         for(Cookie cookie : cookies) {
+            if("AirdndSES".equals(cookie.getName())) {
+               sessionKey = cookie.getValue();
+               AirdndUserVO signInVO = (AirdndUserVO)session.getAttribute(sessionKey);
+               signInIdx = signInVO.getUser_idx();
+               signInName = signInVO.getFirst_name();
+               signInProfileImg = signInVO.getProfileImg();
+               
+            } else {
+               System.out.println("not login");
+            }
+         }
+      }//if
+      
+      //Final data
+      JSONObject res = new JSONObject();         //1
+      JSONObject resFilter1 = new JSONObject();   //2
+      JSONObject resFilter2 = new JSONObject();   //2
+      JSONObject resFilter3 = new JSONObject();   //2
 
-		JSONArray secondArr1 = new JSONArray();		//3
-		JSONArray secondArr2 = new JSONArray();		//3
-		JSONArray secondArr3 = new JSONArray();		//3
-		JSONObject fourthlists = new JSONObject();	//4
+      JSONArray secondArr1 = new JSONArray();      //3
+      JSONArray secondArr2 = new JSONArray();      //3
+      JSONArray secondArr3 = new JSONArray();      //3
+      JSONObject fourthlists = new JSONObject();   //4
 
 		JSONArray info = new JSONArray();			//5
 		JSONObject contents = new JSONObject();		//6-1
@@ -265,118 +265,118 @@ public class ChatController {
 				fourthlists.put("chatHistory", info);
 			}
 
-			secondArr3.add(i, fourthlists);
-			
-			res.put("unread", secondArr3);
-		}
-		
-		//res.put("message", resFilter);
-		
-		//model.addAttribute("res", res.toString());
-		
-		return res.toString();
-		//return Common.VIEW_PATH + "chat.jsp";
-	}
-	
-	@RequestMapping(value = "/message_insert", method=RequestMethod.POST,
-			produces = "application/json;charset=utf8", consumes = MediaType.ALL_VALUE)
-	@ResponseBody
-	public String insert_chat(Model model, @RequestBody String payload) {
-		HttpHeaders resHeaders = new HttpHeaders();
-		resHeaders.add("Content-Type", "application/json;charset=UTF-8");
-		
-		//initialization
-				JSONObject result = new JSONObject();
-				Map<String, Object> javaObject = null;
-				int result_idx = 0;
-				int res = 0;
-		
-		//from Payload
-				try {
-					javaObject = mapper.readValue(payload, Map.class);
-				} catch (Exception e) {
-					System.out.println("payload 오류");
-				}
-				System.out.println("javaObject: " + javaObject);
-		
-		//Login cookie
-		HttpSession session = request.getSession();
-		Cookie[] cookies = request.getCookies();
-		String sessionKey = "";
-		int signInIdx = 1; //temp
-		String signInProfileImg = "";
-		String signInName = "";
-		
-		if(cookies == null) {
-			System.out.println("not cookies");
-		}else {
-			for(Cookie cookie : cookies) {
-				if("AirdndSES".equals(cookie.getName())) {
-					sessionKey = cookie.getValue();
-					AirdndUserVO signInVO = (AirdndUserVO)session.getAttribute(sessionKey);
-					signInIdx = signInVO.getUser_idx();
-					signInProfileImg = signInVO.getProfileImg();
-					signInName = signInVO.getLast_name() + signInVO.getFirst_name();
-				} else {
-					System.out.println("not login");
-				}
-			}
-		}//if
-		
-		
-		
-		AirdndChatVO chatVO = new AirdndChatVO();
-		AirdndChatMsgsVO chatMsgVO = new AirdndChatMsgsVO();
-		
-		int host_idx = 0;
-		String host_profile_imgurl = null;
-		String all_hidden_unread = null;
-		
-		//from Login cookie
-		chatVO.setUser_idx(signInIdx);
-		chatMsgVO.setFrom_idx(signInIdx);
-		
-		
-		
-		host_idx = Integer.parseInt(javaObject.get("hostId").toString());
-		host_profile_imgurl = javaObject.get("hostProfileImg").toString();
-		all_hidden_unread = javaObject.get("filter").toString();
-		
-		AirdndChatVO chatVO2 = airdndChatService.selectHostChat(signInIdx, host_idx);
-		
-		if(chatVO2 == null) {
-			chatVO.setUser_idx(signInIdx);
-			chatVO.setHost_idx(host_idx);
-			chatVO.setHost_profile_imgurl(host_profile_imgurl);
-			chatVO.setAll_hidden_unread(all_hidden_unread);
-			
-			AirdndUserResInfoVO userResInfoVO = airdndChatService.selectUserResInfo(chatVO.getUser_idx(), chatVO.getHost_idx());
-			
-			chatVO.setCheckin(userResInfoVO.getCheckin());
-			chatVO.setCheckout(userResInfoVO.getCheckout());
-			
-			chatVO2 = airdndChatService.insertChat(chatVO);
-			chatMsgVO.setMessage_idx(chatVO2.getIdx());
-		} else {
-			chatMsgVO.setMessage_idx(chatVO.getIdx());
-		}
-		
-		chatMsgVO.setFrom_idx(signInIdx);
-		chatMsgVO.setTo_idx(host_idx);
-		chatMsgVO.setFrom_profile_imgurl(signInProfileImg);
-		
-		res = airdndChatService.insertMsg(chatMsgVO);
- 		
-		//Real
-		//vo.setContent(request.getParameter("content"));
-		
-		//airdndChatService.insertChat(vo);
-		if(res == 1) {
-			
-		}
-		
-		model.addAttribute("vo", chatVO);
-		
-		return "redirect:chat";
-	}
+         secondArr3.add(i, fourthlists);
+         
+         res.put("unread", secondArr3);
+      }
+      
+      //res.put("message", resFilter);
+      
+      //model.addAttribute("res", res.toString());
+      
+      return res.toString();
+      //return Common.VIEW_PATH + "chat.jsp";
+   }
+   
+   @RequestMapping(value = "/message_insert", method=RequestMethod.POST,
+         produces = "application/json;charset=utf8", consumes = MediaType.ALL_VALUE)
+   @ResponseBody
+   public String insert_chat(Model model, @RequestBody String payload) {
+      HttpHeaders resHeaders = new HttpHeaders();
+      resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+      
+      //initialization
+            JSONObject result = new JSONObject();
+            Map<String, Object> javaObject = null;
+            int result_idx = 0;
+            int res = 0;
+      
+      //from Payload
+            try {
+               javaObject = mapper.readValue(payload, Map.class);
+            } catch (Exception e) {
+               System.out.println("payload 오류");
+            }
+            System.out.println("javaObject: " + javaObject);
+      
+      //Login cookie
+      HttpSession session = request.getSession();
+      Cookie[] cookies = request.getCookies();
+      String sessionKey = "";
+      int signInIdx = 1; //temp
+      String signInProfileImg = "";
+      String signInName = "";
+      
+      if(cookies == null) {
+         System.out.println("not cookies");
+      }else {
+         for(Cookie cookie : cookies) {
+            if("AirdndSES".equals(cookie.getName())) {
+               sessionKey = cookie.getValue();
+               AirdndUserVO signInVO = (AirdndUserVO)session.getAttribute(sessionKey);
+               signInIdx = signInVO.getUser_idx();
+               signInProfileImg = signInVO.getProfileImg();
+               signInName = signInVO.getLast_name() + signInVO.getFirst_name();
+            } else {
+               System.out.println("not login");
+            }
+         }
+      }//if
+      
+      
+      
+      AirdndChatVO chatVO = new AirdndChatVO();
+      AirdndChatMsgsVO chatMsgVO = new AirdndChatMsgsVO();
+      
+      int host_idx = 0;
+      String host_profile_imgurl = null;
+      String all_hidden_unread = null;
+      
+      //from Login cookie
+      chatVO.setUser_idx(signInIdx);
+      chatMsgVO.setFrom_idx(signInIdx);
+      
+      
+      
+      host_idx = Integer.parseInt(javaObject.get("hostId").toString());
+      host_profile_imgurl = javaObject.get("hostProfileImg").toString();
+      all_hidden_unread = javaObject.get("filter").toString();
+      
+      AirdndChatVO chatVO2 = airdndChatService.selectHostChat(signInIdx, host_idx);
+      
+      if(chatVO2 == null) {
+         chatVO.setUser_idx(signInIdx);
+         chatVO.setHost_idx(host_idx);
+         chatVO.setHost_profile_imgurl(host_profile_imgurl);
+         chatVO.setAll_hidden_unread(all_hidden_unread);
+         
+         AirdndUserResInfoVO userResInfoVO = airdndChatService.selectUserResInfo(chatVO.getUser_idx(), chatVO.getHost_idx());
+         
+         chatVO.setCheckin(userResInfoVO.getCheckin());
+         chatVO.setCheckout(userResInfoVO.getCheckout());
+         
+         chatVO2 = airdndChatService.insertChat(chatVO);
+         chatMsgVO.setMessage_idx(chatVO2.getIdx());
+      } else {
+         chatMsgVO.setMessage_idx(chatVO.getIdx());
+      }
+      
+      chatMsgVO.setFrom_idx(signInIdx);
+      chatMsgVO.setTo_idx(host_idx);
+      chatMsgVO.setFrom_profile_imgurl(signInProfileImg);
+      
+      res = airdndChatService.insertMsg(chatMsgVO);
+       
+      //Real
+      //vo.setContent(request.getParameter("content"));
+      
+      //airdndChatService.insertChat(vo);
+      if(res == 1) {
+         
+      }
+      
+      model.addAttribute("vo", chatVO);
+      
+      return "redirect:chat";
+   }
 }
