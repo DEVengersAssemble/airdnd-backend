@@ -1,0 +1,10 @@
+filterCondition: {
+  instantBooking: true/false,
+  superhost: true/false,
+  bedCount: true/false,
+  bedroomCount: true/false,
+  bathroomCount: true/false,
+  amenityList: ['샴푸', ...],
+  facilityList: ['수영장', ...], 
+  hostLangList: ['영어', '한국어', ///]
+}
