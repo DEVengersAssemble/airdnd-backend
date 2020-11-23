@@ -66,13 +66,13 @@ public class HomeController {
 			method=RequestMethod.GET, produces = "application/json;charset=utf8", consumes = MediaType.ALL_VALUE)
 	@ResponseBody
 	public String check( HttpServletResponse response, int home_idx) {
-
 		HttpSession session = request.getSession();
 		Cookie[] cookies = request.getCookies();
 		String sessionKey = "";
 		int signInIdx = 0;
 		String signInEmail;
 		String signInName;
+		
 		if(cookies == null) {
 			System.out.println("not cookies");
 		}else {
