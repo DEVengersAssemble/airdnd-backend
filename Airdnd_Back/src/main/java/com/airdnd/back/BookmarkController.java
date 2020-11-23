@@ -1,7 +1,7 @@
 package com.airdnd.back;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +18,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -347,9 +347,10 @@ public class BookmarkController {
 		return result.toString();
 	}
 	
-	@RequestMapping(value="/wishlist_delete", method=RequestMethod.POST,
+	@RequestMapping(value="/wishlist_delete/{bookmarkHomeId}", method=RequestMethod.DELETE,
 			produces="application/json;charset=utf8", consumes=MediaType.ALL_VALUE)
-	public String delete_bookmarkHome(@RequestBody String payload) {
+	@ResponseBody
+	public String delete_bookmarkHome(@PathVariable String bookmarkHomeId) {
 		HttpHeaders resHeaders = new HttpHeaders();
 		resHeaders.add("Content-Type", "application/json;charset=UTF-8");
 		
@@ -383,17 +384,15 @@ public class BookmarkController {
 		int home_idx = 0;
 		int bookmark_idx = 0;
 		
-		//from Payload
+		//from Parameter
 		try {
-			javaObject = mapper.readValue(payload, Map.class);
-			System.out.println("payload가 잘 돼용!");
-		} catch (Exception e) {
-			System.out.println("payload 오류");
+			home_idx = Integer.parseInt(URLEncoder.encode(bookmarkHomeId, "utf-8"));
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		System.out.println("javaObject: " + javaObject);
 		
-		System.out.println("숙소 idx : " + javaObject.get("bookmarkHomeId").toString());
-		home_idx = Integer.parseInt(javaObject.get("bookmarkHomeId").toString());
+		System.out.println("숙소 idx : " + home_idx);
 
 		bookmark_idx = airdndBookmarkService.delete_bookmarkHome(home_idx);
 		int res = airdndBookmarkService.update_updateTime(bookmark_idx);
@@ -408,7 +407,7 @@ public class BookmarkController {
 		//model.addAttribute("vo", vo);
 		//model.addAttribute("vo2", vo2);
 
-		//return "redirect:bookmark";
+		//return "redirect:wishlists";
 		return result.toString();
 	}
 	

@@ -30,59 +30,60 @@ import vo.AirdndUserVO;
 
 @Controller
 public class UserResInfoController {
-	@Autowired
-	AirdndUserResInfoService airdndUserResInfoService;
-	
-	@Autowired
-	HttpServletRequest request;
-	
-	@RequestMapping(value = "/trips/v1", produces = "application/json;charset=utf8")
-	@ResponseBody
-	public String user_res_info_list(Model model, @RequestParam(value="tab", defaultValue="")String tab) {
-		//Login cookie
-		HttpSession session = request.getSession();
-		Cookie[] cookies = request.getCookies();
-		String sessionKey = "";
-		int signInIdx = 1; //temp
-		String signInEmail = "";
-		String signInName = "";
-		
-		if(cookies == null) {
-			System.out.println("not cookies");
-		}else {
-			for(Cookie cookie : cookies) {
-				if("AirdndSES".equals(cookie.getName())) {
-					sessionKey = cookie.getValue();
-					AirdndUserVO signInVO = (AirdndUserVO)session.getAttribute(sessionKey);
-					signInIdx = signInVO.getUser_idx();
-					signInEmail = signInVO.getEmail();
-					signInName = signInVO.getLast_name() + signInVO.getFirst_name();
-				} else {
-					System.out.println("not login");
-				}
-			}
-		}//if
-		
-		//tab에 따른 page 구분
-		try {
-			tab = URLDecoder.decode(tab, "utf-8");
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		//JSON
-		JSONObject res = new JSONObject();			//1
-		JSONArray resArr = new JSONArray();			//1-2
-		JSONObject userInfo = new JSONObject();		//2
-		
-		JSONArray resArr2 = new JSONArray();		//3
-		JSONObject resInfo = new JSONObject();		//4
+   @Autowired
+   AirdndUserResInfoService airdndUserResInfoService;
+   
+   @Autowired
+   HttpServletRequest request;
+   
+   @RequestMapping(value = "/trips/v1", produces = "application/json;charset=utf8")
+   @ResponseBody
+   public String user_res_info_list(Model model, @RequestParam(value="tab", defaultValue="")String tab) {
+      //Login cookie
+      HttpSession session = request.getSession();
+      Cookie[] cookies = request.getCookies();
+      String sessionKey = "";
+      int signInIdx = 1; //temp
+      String signInEmail = "";
+      String signInName = "";
+      
+      if(cookies == null) {
+         System.out.println("not cookies");
+      }else {
+         for(Cookie cookie : cookies) {
+            if("AirdndSES".equals(cookie.getName())) {
+               sessionKey = cookie.getValue();
+               AirdndUserVO signInVO = (AirdndUserVO)session.getAttribute(sessionKey);
+               signInIdx = signInVO.getUser_idx();
+               signInEmail = signInVO.getEmail();
+               signInName = signInVO.getLast_name() + signInVO.getFirst_name();
+            } else {
+               System.out.println("not login");
+            }
+         }
+      }//if
+      
+      //tab에 따른 page 구분
+      try {
+         tab = URLDecoder.decode(tab, "utf-8");
+      } catch (UnsupportedEncodingException e1) {
+         // TODO Auto-generated catch block
+         e1.printStackTrace();
+      }
+      
+      //JSON
+      JSONObject res = new JSONObject();         //1
+      JSONArray resArr = new JSONArray();         //1-2
+      JSONObject userInfo = new JSONObject();      //2
+      
+      JSONArray resArr2 = new JSONArray();      //3
+      JSONObject resInfo = new JSONObject();      //4
 
 		JSONArray rules = new JSONArray();			//5
 		JSONObject locationInfo = null;				//6-1
 		JSONObject rulesInfo = null;				//6-2
 		JSONObject guestInfo = null;				//6-3
+		JSONObject guestsInfo = null;				//6-4
 		
 		AirdndUserVO userVO = airdndUserResInfoService.selectUserInfo(signInIdx);
 		
@@ -108,7 +109,6 @@ public class UserResInfoController {
 		String[] checkout_temp = null;
 		String checkout = "";
 		int checkoutDate = 0;
-		
 		
 		
 		if(tab.equalsIgnoreCase("upcoming")) {
@@ -137,6 +137,7 @@ public class UserResInfoController {
 				rules = new JSONArray();		 //5
 				locationInfo = new JSONObject(); //6-1
 				guestInfo = new JSONObject();	 //6-3
+				guestsInfo = new JSONObject();	 //6-4
 				
 				int n = 0;
 				
@@ -144,7 +145,7 @@ public class UserResInfoController {
 				
 				resInfo.put("reservationId", list1.get(i).getIdx());
 				resInfo.put("homeId", list1.get(i).getHome_idx());
-				resInfo.put("hostname", hostVO.getHost_name());
+				resInfo.put("hostname", hostVO.getHost_name().replace("님", ""));
 				resInfo.put("homeImage", list1.get(i).getUrl());
 				resInfo.put("hostId", hostVO.getIdx());
 				resInfo.put("checkin", list1.get(i).getCheckin());
@@ -165,7 +166,6 @@ public class UserResInfoController {
 				//rules
 				List<AirdndUseRuleVO> useRuleList = airdndUserResInfoService.selectUseRuleInfo(list1.get(i).getHome_idx());
 				
-				
 				for(int j = 0; j < useRuleList.size(); j++) {
 					int m = 0;
 					
@@ -175,6 +175,12 @@ public class UserResInfoController {
 					rules.add(m, rulesInfo);
 					resInfo.put("rules", rules);
 				}
+				
+				//adult, child, infant
+				guestsInfo.put("adult", list1.get(i).getAdult());
+				guestsInfo.put("child", list1.get(i).getChild());
+				guestsInfo.put("infant", list1.get(i).getInfant());
+				resInfo.put("guests", guestsInfo);
 				
 				resInfo.put("isCanceled", list1.get(i).getIs_canceled());
 				resInfo.put("title", homeVO.getTitle());
@@ -238,6 +244,7 @@ public class UserResInfoController {
 				rules = new JSONArray();		 //5
 				locationInfo = new JSONObject(); //6-1
 				guestInfo = new JSONObject();	 //6-3
+				guestsInfo = new JSONObject();	 //6-4
 				
 				int n = 0;
 				
@@ -245,7 +252,7 @@ public class UserResInfoController {
 				
 				resInfo.put("reservationId", list2.get(i).getIdx());
 				resInfo.put("homeId", list2.get(i).getHome_idx());
-				resInfo.put("hostname", hostVO.getHost_name());
+				resInfo.put("hostname", hostVO.getHost_name().replace("님", ""));
 				resInfo.put("homeImage", list2.get(i).getUrl());
 				resInfo.put("hostId", hostVO.getIdx());
 				resInfo.put("checkin", list2.get(i).getCheckin());
@@ -276,6 +283,12 @@ public class UserResInfoController {
 					rules.add(m, rulesInfo);
 					resInfo.put("rules", rules);
 				}
+				
+				//adult, child, infant
+				guestsInfo.put("adult", list2.get(i).getAdult());
+				guestsInfo.put("child", list2.get(i).getChild());
+				guestsInfo.put("infant", list2.get(i).getInfant());
+				resInfo.put("guests", guestsInfo);
 				
 				resInfo.put("isCanceled", list2.get(i).getIs_canceled());
 				resInfo.put("title", homeVO.getTitle());
@@ -327,6 +340,7 @@ public class UserResInfoController {
 				rules = new JSONArray();		 //5
 				locationInfo = new JSONObject(); //6-1
 				guestInfo = new JSONObject();	 //6-3
+				guestsInfo = new JSONObject();	 //6-4
 				
 				int n = 0;
 				
@@ -334,7 +348,7 @@ public class UserResInfoController {
 				
 				resInfo.put("reservationId", list3.get(i).getIdx());
 				resInfo.put("homeId", list3.get(i).getHome_idx());
-				resInfo.put("hostname", hostVO.getHost_name());
+				resInfo.put("hostname", hostVO.getHost_name().replace("님", ""));
 				resInfo.put("homeImage", list3.get(i).getUrl());
 				resInfo.put("hostId", hostVO.getIdx());
 				resInfo.put("checkin", list3.get(i).getCheckin());
@@ -365,6 +379,12 @@ public class UserResInfoController {
 					rules.add(m, rulesInfo);
 					resInfo.put("rules", rules);
 				}
+				
+				//adult, child, infant
+				guestsInfo.put("adult", list3.get(i).getAdult());
+				guestsInfo.put("child", list3.get(i).getChild());
+				guestsInfo.put("infant", list3.get(i).getInfant());
+				resInfo.put("guests", guestsInfo);
 				
 				resInfo.put("isCanceled", list3.get(i).getIs_canceled());
 				resInfo.put("title", homeVO.getTitle());
