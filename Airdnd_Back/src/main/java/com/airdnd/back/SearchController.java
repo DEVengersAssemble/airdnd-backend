@@ -111,11 +111,10 @@ public class SearchController {
 			}
 
 			Map<Integer, String> hostlangmap = new HashMap<Integer, String>();
-			for(int i = 0; i < 5; i++) hostlangmap.put(i, "devengerslang");
+			for(int i = 0; i < 5; i++) hostlangmap.put(i, "devengerslang");//의미없는 값을 넣어논 뒤 or로 필터별로 추가해 검색
 
 			if(hostLangList.equals("0")) for(int i = 0; i < 5; i++) hostlangmap.put(i, "");
 			else {
-
 				String[] hostlang = hostLangList.replace("중국어", "中文").replace("영어", "English").replace("프랑스어", "Français").replace("스페인어", "Español").split("-");
 				for(int i = 0; i < hostlang.length; i++) hostlangmap.replace(i, hostlang[i]);
 			}
