@@ -45,8 +45,8 @@ Spring을 이용한 기능 구현 코드를 Filezilla로 AWS EC2에 업로드하
 - 로그아웃 시 쿠키에서 가져온 세션 키로 해당 세션을 불러와 제거 및 쿠키 expiration time 만료시킴
 - 자동완성 기능은 Airbnb autocompletes api를 사용해 입력한 값에 따른 결과에서 필요한 데이터만 추출하여 Json 형식으로 전달
 
-### 숙소 검색 페이지
-- [숙소 검색 페이지 API 정보 링크](https://github.com/yoonwooseong/Back-end/blob/master/Document/README.md)
+### 숙소 검색 페이지  
+🔗[숙소 검색 페이지 API 정보 링크](https://github.com/yoonwooseong/Back-end/blob/master/Document/README.md)
 - 숙소 검색 리스트 구현은 숙소의 여러 테이블을 참조한 VIEW를 생성해 필요한 데이터 출력
 - 필터 구현은 DAO단에 파라미터를 넘겨 SQL문 조건절 활용해 구현
 - 숙소를 지도에 표시하기 위해 각 숙소의 위도, 경도 값을 Google geocoder api로 구해 데이터베이스의 저장
